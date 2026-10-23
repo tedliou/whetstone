@@ -1,31 +1,82 @@
-Skills are organized into bucket folders under `skills/`:
+# whetstone
 
-- `engineering/`: daily code work
-- `productivity/`: daily non-code workflow tools
-- `misc/`: kept around but rarely used, not promoted
-- `in-progress/`: beta: public on purpose, feedback wanted, not shipped in the plugin
-- `deprecated/`: no longer used
+Personal Claude Code skills, forked from mattpocock/skills at tag `upstream-base`. GitHub only. Skills never write config files into the projects they run in.
 
-Every skill in `engineering/` or `productivity/` (the **promoted** buckets) must have a reference in the top-level `README.md` and an entry in `.claude-plugin/plugin.json`'s `skills` array (the Claude Code plugin ships exactly the promoted set). Skills in `misc/`, `in-progress/`, and `deprecated/` must not appear in either.
+## Layout
 
-Install commands are copied verbatim from [.agents/install-block.md](./.agents/install-block.md). `.claude-plugin/marketplace.json` is the repo's own marketplace. Every agent except Claude Code installs from it to get automatic updates, and Claude Code uses `claude-plugins-official`. Run `claude plugin validate . --strict` after touching either manifest. [ADR 0002](./.agents/adr/0002-ship-as-a-claude-code-plugin.md) records why.
+- `skills/<name>/SKILL.md`: one folder per skill, flat. Reference files sit next to `SKILL.md`.
+- `skills/_shared/`: rules and scripts used by more than one skill. `workflow.md` is the single source for branch, commit, and issue-closing rules. `github.md` covers `gh` usage. `scripts/` holds `context`, `tickets`, `link`, `land`, each as `.sh` and `.ps1`.
+- `scripts/`: repo tooling. `link.sh` / `link.ps1` install the skills into `~/.claude/skills`. `check.sh` runs the same checks as CI.
+- `evals/`: trigger and outcome tests.
 
-Each skill entry in the top-level `README.md` must link the skill name to its `SKILL.md`.
+## Keeping lists in sync
 
-Each bucket folder has a `README.md` that lists every skill in the bucket with a one-line description, with the skill name linked to its `SKILL.md`. The promoted buckets' `README.md`s and the top-level `README.md` group entries into **User-invoked** and **Model-invoked**; non-promoted bucket `README.md`s (`misc/`, `in-progress/`) use a flat list.
+A skill exists when its folder has a `SKILL.md`. Every such skill must appear in:
 
-Skills in `engineering/` and `productivity/` also have a human-facing docs page at `docs/<bucket>/<skill-name>.md` (the docs tree mirrors those two bucket folders under `skills/`). The published URL is `https://aihero.dev/skills-<skill-name>` regardless of bucket: the docs path is repo organisation only. When you add, rename, or change the behaviour of a skill in `engineering/` or `productivity/`, create or re-sync its docs page following [.agents/writing-docs.md](./.agents/writing-docs.md). A finished page carries four sections: **What it does**, **When to reach for it**, **Common questions**, and **It's working if**. `writing-docs.md` holds the template, the section order, and where to hunt for the questions. Skills in the non-promoted buckets (`misc/`, `in-progress/`, `deprecated/`) get **no** docs page. The one exception is a promoted skill removed outright: its page stays, marked archived (see `writing-docs.md`).
+- `.claude-plugin/plugin.json` `skills`
+- the skill tables in `README.md` and `README.en.md`, linked to its `SKILL.md`
 
-Every `SKILL.md` is either user-invoked (`disable-model-invocation: true` plus `policy.allow_implicit_invocation: false` in `agents/openai.yaml`, reachable only by the human) or model-invoked (model- or user-reachable). See [.agents/invocation.md](./.agents/invocation.md).
+`scripts/check.sh` fails when these drift. Run `claude plugin validate . --strict` after touching a manifest.
 
-[`ask-matt`](./skills/engineering/ask-matt/SKILL.md) is the router that maps every user-reachable skill and how they relate. The same trigger that re-syncs a docs page applies to it: whenever you add, rename, remove, or change how a user-reachable skill fits the flows, re-read `ask-matt`'s `SKILL.md` and update it so the map stays accurate: a new skill it never mentions, or a stale one it still routes to, is a router that lies.
+## Vocabulary
 
-To (re)link every skill outside `deprecated/` and `misc/` into the local harness skill directories (`~/.claude/skills`, `~/.agents/skills`), run `scripts/link-skills.sh`. Each entry is a symlink into this repo, so a `git pull` keeps installed skills current; re-run the script after adding, removing, or renaming a skill.
+Use these words and no synonyms, in skills and in output. Chinese output uses the fixed translation in brackets.
 
-No em-dashes anywhere in this repo's prose (`SKILL.md` files, docs, `README.md`, `CHANGELOG.md`, ADRs, changesets, code comments). Where a sentence reaches for one, rewrite it instead with a comma, colon, period, parentheses, or a conjunction, whichever the sentence actually wants; never do a blind character substitution.
+| Term | Meaning |
+|---|---|
+| spec | Parent GitHub issue describing one feature. (spec) |
+| ticket | Sub-issue of a spec; one independently shippable slice. (票) |
+| frontier | Open tickets with no open blockers and no assignee. (可開工的票) |
+| checkpoint | A ticket marked for review as soon as it is done, instead of at PR time. (checkpoint) |
+| seam | The interface a test drives; where behaviour is observed. (seam) |
 
-## Agent skills
+Do not call a ticket a slice, task, or story. Do not call a spec a PRD.
 
-### Triage labels
+## Writing a skill
 
-Canonical names, unchanged. See `docs/agents/triage-labels.md`. Issues are judged against [`SCOPE.md`](./SCOPE.md).
+Token cost and model confusion are the main enemies. Each rule below exists to cut one or the other.
+
+- `SKILL.md`, reference files, scripts, and this file are English. Never tell the model which language to reply in; output follows the user's CLAUDE.md, else the user's message. Templates say "translate headings to the output language".
+- Keep the `SKILL.md` body under 5,000 tokens. After compaction only the first 5,000 tokens of a skill survive, so put the rules that must hold first and examples last.
+- One fact lives in one place. Shared rules go in `_shared/workflow.md`; skills link to it one level deep and never restate it.
+- `description` is third person, says what the skill does and when to use it, key words first. Main-flow skills (grill, to-spec, to-tickets, implement, pr) must say they trigger only with an issue number or when continuing the previous step. Model-invocable descriptions together stay under 1,700 characters.
+- User-only skills set `disable-model-invocation: true` and an `argument-hint`.
+- Say what to do and why. No MUST, CRITICAL, or capitals for emphasis.
+- Deterministic GitHub or git operations go in a `_shared/scripts` script, not in prose the model turns into commands. Skills call scripts as the first step with whichever shell tool is available:
+  - Bash: `bash "${CLAUDE_SKILL_DIR}/../_shared/scripts/<name>.sh" <args>`
+  - PowerShell: `powershell -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_SKILL_DIR}/../_shared/scripts/<name>.ps1" <args>`
+- Do not use `!` command injection in skills. It runs one fixed shell and a failure stops the skill from loading.
+- Subagent briefs are fill-in templates in a reference file. A subagent sees only its brief.
+
+## Scripts
+
+- Each script has a `.sh` and a `.ps1` with the same arguments, the same output, and the same exit codes.
+- Output is English plain text, one record per line, fields separated by a tab. Errors say how to fix them.
+- Scripts exit 0 and print their state (for example `gh	not-logged-in`) unless the doc for that script says otherwise.
+- Use `gh --jq`; do not require `jq`.
+- `.ps1` must run on Windows PowerShell 5.1: no `&&`, `||`, ternary, or `??`. Start with `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8`.
+- Scripts contain ASCII only, including comments.
+- All files are UTF-8 without BOM, LF line endings. Paths use forward slashes.
+
+## Prose style
+
+Applies to skills, READMEs, and everything skills produce (replies, issues, PRs, commits).
+
+- No emoji.
+- Plain words and short complete sentences. Shorten by cutting repetition and filler, not by compressing into jargon or abbreviations.
+- Prefer a diagram to a long paragraph: plain-text diagrams in the terminal, Mermaid in issues and PRs.
+- Lists for parallel items; a table when items have two or more attributes to compare.
+- No bold or italic for emphasis. Headings and code formatting are fine.
+- Explain a term in one sentence the first time it appears.
+- No em-dashes. Rewrite the sentence with a comma, colon, period, or parentheses.
+
+## Following upstream
+
+There is no upstream remote. To review what changed upstream since the fork:
+
+```bash
+git fetch https://github.com/mattpocock/skills main
+git log --oneline upstream-base..FETCH_HEAD -- skills/engineering/tdd
+```
+
+Port ideas by rewriting, then record what was taken in `UPSTREAM.md` and `UPSTREAM.en.md`. Move `upstream-base` only when the whole tree has been reviewed.

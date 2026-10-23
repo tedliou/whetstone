@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repo checks
+        run: bash scripts/check.sh
+      - name: shellcheck
+        run: git ls-files -z -- '*.sh' | xargs -0 -r shellcheck
+      - name: PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+          $files = git ls-files -- '*.ps1'
+          $issues = $files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_ -Severity Warning,Error }
+          $issues | Format-Table -AutoSize
+          if ($issues) { exit 1 }

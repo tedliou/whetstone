@@ -1,74 +1,73 @@
 ---
 name: domain-modeling
-description: Build and sharpen a project's domain model. Use when discussing codebase terminology, writing or editing a GLOSSARY.md, or recording or editing an ADR.
+description: Writes GLOSSARY.md terms and ADRs in docs/adr/ as domain language settles. Use when terms are disputed or a decision needs recording.
 ---
 
-# Domain Modeling
+# Domain modeling
 
-Actively build and sharpen the project's domain model as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise. (Merely *reading* `GLOSSARY.md` for vocabulary is not this skill: that's a one-line habit any skill can do. This skill is for when you're changing the model, not just consuming it.)
+Sharpen the project's domain language while designing, and write each settled term or decision down the moment it settles. Reading `GLOSSARY.md` for vocabulary does not need this skill; changing it does.
 
-## File structure
+Two files, at fixed paths. Create each only when there is something to write.
 
-Most repos have a single context:
+| File | Holds |
+|---|---|
+| `GLOSSARY.md` at the repo root | Domain terms: what each one is, and the words to avoid |
+| `docs/adr/NNNN-slug.md` | One hard-to-reverse decision and why |
 
+Edits made while grilling stay uncommitted; [workflow.md](../_shared/workflow.md#commits) says when and how they get committed.
+
+## During the conversation
+
+- Challenge against the glossary. When the user uses a term differently from `GLOSSARY.md`, say so at once: "The glossary defines cancellation as X, but you seem to mean Y. Which is it?"
+- Sharpen fuzzy words. When a word is vague or overloaded, propose one precise term: "By account, do you mean the Customer or the User?"
+- Test with concrete scenarios. Invent edge cases that force a clear line between two concepts.
+- Check the code. When the user says how something works, look. Raise any contradiction: "The code cancels whole Orders, but you said partial cancellation is possible. Which is right?"
+- Write as you go. Update `GLOSSARY.md` as soon as a term is settled, not in a batch at the end.
+
+## GLOSSARY.md
+
+```md
+# {Project or context name}
+
+{One or two sentences: what this domain is and why it exists.}
+
+## Language
+
+**Order**:
+A customer's request to buy one or more products.
+_Avoid_: purchase, transaction
+
+**Invoice**:
+A request for payment sent to a customer after delivery.
+_Avoid_: bill, payment request
 ```
-/
-├── GLOSSARY.md
-├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
-└── src/
+
+- Pick one word per concept and list the others under `_Avoid_`.
+- One or two sentences per term. Say what it is, not what it does.
+- Only terms specific to this domain. General programming ideas (timeout, retry, error type) stay out even if the code uses them a lot.
+- Group terms under subheadings when clusters appear; a flat list is fine otherwise.
+- No implementation details. The glossary is not a spec or a notes file.
+
+## ADRs
+
+Offer an ADR only when all three hold:
+
+1. Hard to reverse: changing your mind later costs real effort.
+2. Surprising without context: a future reader would ask why it was done this way.
+3. A real trade-off: there were genuine alternatives and one was picked for a reason.
+
+Typical cases: architectural shape, how two parts of the system talk to each other, technology with lock-in, who owns which data, a deliberate departure from the obvious approach, a constraint the code does not show (compliance, a partner's latency contract), and a rejected alternative someone is likely to propose again.
+
+Number it one above the highest file in `docs/adr/`, starting at `0001`. Usually one paragraph is enough:
+
+```md
+# {Short title of the decision}
+
+{1 to 3 sentences: the context, what was decided, and why.}
 ```
 
-If a `GLOSSARY-MAP.md` exists at the root, the repo has multiple contexts. The map points to where each one lives:
+Add these only when they carry real information:
 
-```
-/
-├── GLOSSARY-MAP.md
-├── docs/
-│   └── adr/                          ← system-wide decisions
-├── src/
-│   ├── ordering/
-│   │   ├── GLOSSARY.md
-│   │   └── docs/adr/                 ← context-specific decisions
-│   └── billing/
-│       ├── GLOSSARY.md
-│       └── docs/adr/
-```
-
-Create files lazily: only when you have something to write. If no `GLOSSARY.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
-
-## During the session
-
-### Challenge against the glossary
-
-When the user uses a term that conflicts with the existing language in `GLOSSARY.md`, call it out immediately. "Your glossary defines 'cancellation' as X, but you seem to mean Y. Which is it?"
-
-### Sharpen fuzzy language
-
-When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'account': do you mean the Customer or the User? Those are different things."
-
-### Discuss concrete scenarios
-
-When domain relationships are being discussed, stress-test them with specific scenarios. Invent scenarios that probe edge cases and force the user to be precise about the boundaries between concepts.
-
-### Cross-reference with code
-
-When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code cancels entire Orders, but you just said partial cancellation is possible. Which is right?"
-
-### Update GLOSSARY.md inline
-
-When a term is resolved, update `GLOSSARY.md` right there. Don't batch these up: capture them as they happen. Use the format in [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
-
-`GLOSSARY.md` should be totally devoid of implementation details. Do not treat `GLOSSARY.md` as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
-
-### Offer ADRs sparingly
-
-Only offer to create an ADR when all three are true:
-
-1. **Hard to reverse**: the cost of changing your mind later is meaningful
-2. **Surprising without context**: a future reader will wonder "why did they do it this way?"
-3. **The result of a real trade-off**: there were genuine alternatives and you picked one for specific reasons
-
-If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
+- `Status` frontmatter: `proposed`, `accepted`, `deprecated`, or `superseded by ADR-NNNN`.
+- Considered options: when the rejected alternatives are worth remembering.
+- Consequences: when the downstream effects are not obvious.

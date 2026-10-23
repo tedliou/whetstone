@@ -12,12 +12,14 @@ files=$(git ls-files -- ':!*.png' ':!*.jpg')
 
 # Line endings and BOM.
 for f in $files; do
+    [ -f "$f" ] || continue
     if grep -q $'\r' "$f"; then problem "crlf	$f"; fi
     if [ "$(head -c 3 "$f" | od -An -tx1 | tr -d ' \n')" = "efbbbf" ]; then problem "bom	$f"; fi
 done
 
 # Invisible and bidi control characters anywhere.
 for f in $files; do
+    [ -f "$f" ] || continue
     if grep -nP '[\x{200B}-\x{200F}\x{202A}-\x{202E}\x{2060}-\x{2064}\x{2066}-\x{2069}\x{FEFF}\x{00AD}]' "$f" >/dev/null 2>&1; then
         problem "invisible-char	$f"
     fi

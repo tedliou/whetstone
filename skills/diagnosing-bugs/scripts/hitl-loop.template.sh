@@ -1,21 +1,20 @@
 #!/usr/bin/env bash
-# Human-in-the-loop reproduction loop.
-# Copy this file, edit the steps below, and run it.
-# The agent runs the script; the user follows prompts in their terminal.
-#
-# Usage:
+# Human-in-the-loop reproduction script.
+# Copy this file outside the repo, edit the steps between the markers,
+# and ask the user to run it in their own terminal:
 #   bash hitl-loop.template.sh
 #
-# Two helpers:
-#   step "<instruction>"          → show instruction, wait for Enter
-#   capture VAR "<question>"      → show question, read response into VAR
+# Helpers:
+#   step "<instruction>"        show the instruction, wait for Enter
+#   capture VAR "<question>"    show the question, store the answer in VAR
 #
-# At the end, captured values are printed as KEY=VALUE for the agent to parse.
-#
-# `capture` prints its value back to the terminal, where the agent reads it,
-# so capture observations, and leave signing in to the user as a `step`.
+# The script ends by printing every captured value as KEY=VALUE.
+# Captured values are shown on screen, so never capture a credential;
+# put sign-in in a step instead.
 
 set -euo pipefail
+
+CAPTURED=()
 
 step() {
   printf '\n>>> %s\n' "$1"
@@ -27,18 +26,20 @@ capture() {
   printf '\n>>> %s\n' "$question"
   read -r -p "    > " answer
   printf -v "$var" '%s' "$answer"
+  CAPTURED+=("$var")
 }
 
 # --- edit below ---------------------------------------------------------
 
 step "Open the app at http://localhost:3000 and sign in."
 
-capture ERRORED "Click the 'Export' button. Did it throw an error? (y/n)"
+capture ERRORED "Click the Export button. Did it show an error? (y/n)"
 
-capture ERROR_MSG "Paste the error message (or 'none'):"
+capture ERROR_MSG "Paste the error message, or type none:"
 
 # --- edit above ---------------------------------------------------------
 
 printf '\n--- Captured ---\n'
-printf 'ERRORED=%s\n' "$ERRORED"
-printf 'ERROR_MSG=%s\n' "$ERROR_MSG"
+for var in "${CAPTURED[@]}"; do
+  printf '%s=%s\n' "$var" "${!var}"
+done

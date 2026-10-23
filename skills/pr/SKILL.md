@@ -1,170 +1,65 @@
 ---
 name: pr
-description: "Use when writing a PR body."
+description: Reviews a spec branch, then pushes it and opens a GitHub PR that closes its issues. Use when asked to open a PR, or after implement.
+argument-hint: "[#spec-or-ticket]"
 metadata:
-  credits:
-    skill: show-me
-    author: Dex Horthy
-    organisation: Humanlayer
-    url: "https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md"
+  credits: "Summary visuals adapted from Dex Horthy's show-me skill (humanlayer/skills)"
 ---
 
-Use this template for writing the PR body:
+# PR
+
+Branch and issue rules are in [workflow.md](../_shared/workflow.md). A spec branch becomes one PR into the default branch, and that PR closes the spec and its tickets when merged.
+
+## Steps
+
+1. Run `context`. Stop if `gh` is not `ok`, or if the current branch is the default branch.
+2. Find the spec: the argument, else the spec number in the branch name. Run `tickets <spec>`.
+   - Tickets with status `done` get a `Closes #n` line, and so does the spec.
+   - If some tickets are not `done`, list them and ask whether to open the PR anyway. Without the spec's `Closes` line, the spec stays open.
+3. Uncommitted changes: list them and ask. Do not commit them silently.
+4. Review once. Collect the commits in `origin/<default>..HEAD` and drop those whose `Refs` ticket body has the checkpoint marker (already reviewed). If any remain, invoke `review` with that commit list and the spec.
+   - Fix must-fix findings as new commits with the matching `Refs #n`, then run the project's test command again.
+   - Keep judgement findings for the AI review section.
+5. Ask once: push and open the PR? Skip the question if the user already said yes in this conversation, for example by accepting implement's offer.
+6. `git push -u origin <branch>`, write the body to a temp file, then `gh pr create --base <default> --head <branch> --title <title> --body-file <file>`. The title is the spec title.
+7. Report the PR URL. The next step is the user's: merge on GitHub.
+
+## Body
+
+Translate headings to the output language. No preamble; keep each section short.
 
 ```markdown
 ## Summary
+<one to three sentences on what changed and why, then at most one visual>
 
-<diagram, diff-sketch, or tree>
+## Related issues
+Closes #<spec>
+Closes #<ticket>
 
-## Evidence
+## Verification
+- [x] <command actually run>: <result>
+<before and after evidence when behaviour is visible>
 
-- **Before:** <screenshot/output/failing test run>
-  **After:** <screenshot/output/passing test run>
+## AI review
+<judgement findings left for a human, one per line, or "None">
 
-## Merge Danger
-
-**Door:** <one-way or two-way>
-
-<optional: description>
-
-**Blast Radius:** <one-word description>
-
-<optional: potential ramifications of merge>
+## Merge risk
+Reversible: <yes, or no and why>. Affects: <who or what could break>.
 ```
 
-## Sections
+Only list checks that were actually run. Use GLOSSARY.md terms.
 
-Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+## Summary visual
 
-### Summary
+Pick the smallest view that makes the point, under 15 lines:
 
-Pick the smallest view that makes the key point clear.
+| Point to make | Visual |
+|---|---|
+| Logic or algorithm | pseudocode in a `text` block |
+| Runtime flow | call tree |
+| UI structure | component tree with the state that matters |
+| File responsibilities | shallow file tree with one comment per entry |
+| Interaction between parts | Mermaid sequence or flowchart |
+| What changed in an existing shape | `diff` block of any of the above |
 
-- Show logic or an algorithm as pseudocode:
-
-```text
-on(save)
-  if content is unchanged
-    return cached result
-  write new content
-  return fresh result
-```
-
-- Show runtime control flow as a call tree:
-
-```text
-submitForm
-  createSession
-    persistPrompt
-    launchAgent
-  navigateToSession
-```
-
-- Show UI structure as a component tree, including state and module boundaries that matter:
-
-```text
-<SessionPage> (apps/example/src/routes/session.tsx)
-  useSessionEvents()
-  <SessionToolbar>
-    <RunSkillButton> (packages/ui)
-```
-
-- Show file responsibility or a broad refactor as a shallow file tree:
-
-```text
-src/
-├── commands/       # parses user actions
-├── sessions/       # owns session state
-└── transport/      # sends API requests
-```
-
-- Show component interaction, control flow, or data flow with Mermaid:
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant UI
-    participant Daemon
-    User->>UI: choose command
-    UI->>Daemon: send expanded prompt
-    Daemon-->>UI: stream result
-```
-
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
-
-For a component change:
-
-```diff
- <SessionPage>
-   useSessionEvents()
-   <SessionToolbar>
-+    <RunSkillButton />
-   <SessionTimeline>
-+    <SkillResultCard />
-```
-
-For a file-layout change:
-
-```diff
- src/
- ├── commands/
-+│   └── show-me.ts       # expands the slash command
- ├── sessions/
--└── transport.ts
-+└── transport/
-+    ├── client.ts
-+    └── stream.ts
-```
-
-For a call-tree or call-stack change:
-
-```diff
- submitForm
-   createSession
-     persistPrompt
-+    expandSkillMention
-     launchAgent
--  navigateToSession
-+  navigateToSession
-+    subscribeToEvents
-```
-
-For a state or control-flow change:
-
-```diff
- on(save)
--  write content
-+  if content is unchanged
-+    return cached result
-+  write new content
-+  invalidate cache
-```
-
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
-
-```ts
-function expandSkill(command: string): string {
-  const skillName = command.slice(1);
-  return `use the ${skillName} skill`;
-}
-```
-
-#### Guidance
-
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
-
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
-
-### Evidence
-
-Concrete evidence that the change works. Show a before and after.
-
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
-
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
-
-### Merge Danger
-
-Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
-
-The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.
+Skip the visual when one sentence already says it.

@@ -1,75 +1,56 @@
 ---
 name: to-spec
-description: "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed."
-disable-model-invocation: true
+description: Writes the current discussion up as a GitHub spec issue. Use when asked for a spec, or when continuing from grill.
+argument-hint: "[#issue to build on]"
 ---
 
-This skill takes the current conversation context and codebase understanding and produces a spec. Do NOT interview the user; just synthesize what you already know.
+# To spec
 
-The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
+Turn what is already known (this conversation, the code, an issue passed as argument) into one spec issue. Do not interview again. The only question is the seam check in step 3.
 
-## Process
+## Steps
 
-1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's domain glossary vocabulary throughout the spec, and respect any ADRs in the area you're touching.
+1. Run `context` ([workflow.md](../_shared/workflow.md#scripts)). Stop if `gh` is not `ok`.
+2. Explore the code you have not seen yet. Use GLOSSARY.md terms and respect the ADRs in the area.
+3. Seams: choose where the feature will be tested. Prefer existing seams and the highest one possible; fewer is better, one is ideal. If the seams were already settled while grilling, state them and move on; otherwise propose them and wait for the user.
+4. Write the body from the template below into a temp file and create the issue: `gh issue create --title <title> --body-file <file>`. Do not create a branch; implement does that.
+5. Report the issue URL, then ask whether to continue with `to-tickets`. On yes, invoke it with the spec number.
 
-2. Sketch out the seams at which you're going to test the feature. Existing seams should be preferred to new ones. Use the highest seam possible. If new seams are needed, propose them at the highest point you can. The fewer seams across the codebase, the better - the ideal number is one.
+## Writing rules
 
-Check with the user that these seams match their expectations.
+- Say each fact once, in the section it belongs to, with its reason next to it.
+- One user story per user goal. Edge and failure cases go in the matching decision and in testing, not as extra stories.
+- No file paths or code; they go stale. A short type shape or state machine is fine when prose would be less exact.
+- Mention a rejected alternative only inside the reason of the decision that beat it.
+- Do not restate rules the project's CLAUDE.md already sets.
 
-3. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+## Template
 
-<spec-template>
+Translate headings to the output language.
 
-## Problem Statement
-
-The problem that the user is facing, from the user's perspective.
+```markdown
+## Problem
+The problem from the user's point of view.
 
 ## Solution
+The direction from the user's point of view: what changes, in what form, the key trade-offs.
 
-The solution to the problem, from the user's perspective.
+## User stories
+1. As a <actor>, I want <capability>, so that <benefit>.
 
-## User Stories
+## Decisions
+- <decision>: <reason, and its cost if any>
+  Covers modules and their interfaces, schema and API contracts, and existing behaviour that must stay.
 
-A LONG, numbered list of user stories. Each user story should be in the format of:
+## Testing
+- Seam <name> (stories 1, 3): <what it checks>; edge and failure cases: <list>; fixtures or test doubles: <list>
+- Not tested: <what, and why>
 
-1. As an <actor>, I want a <feature>, so that <benefit>
+## Out of scope
+- <thing not done, when no decision above already says so>
 
-<user-story-example>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
-</user-story-example>
-
-This list of user stories should be extremely extensive and cover all aspects of the feature.
-
-## Implementation Decisions
-
-A list of implementation decisions that were made. This can include:
-
-- The modules that will be built/modified
-- The interfaces of those modules that will be modified
-- Technical clarifications from the developer
-- Architectural decisions
-- Schema changes
-- API contracts
-- Specific interactions
-
-Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
-
-Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts, not a working demo, just the important bits.
-
-## Testing Decisions
-
-A list of testing decisions that were made. Include:
-
-- A description of what makes a good test (only test external behavior, not implementation details)
-- Which modules will be tested
-- Prior art for the tests (i.e. similar types of tests in the codebase)
-
-## Out of Scope
-
-A description of the things that are out of scope for this spec.
-
-## Further Notes
-
-Any further notes about the feature.
-
-</spec-template>
+## Domain changes
+- GLOSSARY.md: <terms added or changed>
+- docs/adr/<file>: <decision>
+(Not committed yet; implement commits them on the spec branch. Omit this section when nothing changed.)
+```

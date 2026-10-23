@@ -2,7 +2,7 @@
 # Repo checks. CI runs this; run it locally before pushing.
 # Prints one line per problem and exits 1 if any were found.
 set -u
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/.." || exit 1
 export LC_ALL=C.UTF-8 2>/dev/null || export LC_ALL=C
 
 fail=0
@@ -38,9 +38,11 @@ for n in $skills; do
         grep -q "(skills/$n/SKILL.md)" "$r" || problem "not-in-$r	$n"
     done
 done
-for n in $(grep -o '"./skills/[^"]*"' .claude-plugin/plugin.json | sed 's#"./skills/##; s#"##'); do
+grep -o '"./skills/[^"]*"' .claude-plugin/plugin.json | sed 's#"./skills/##; s#"##' > "${TMPDIR:-/tmp}/whetstone-listed.$$"
+while read -r n; do
     [ -f "skills/$n/SKILL.md" ] || problem "plugin.json-lists-missing	$n"
-done
+done < "${TMPDIR:-/tmp}/whetstone-listed.$$"
+rm -f "${TMPDIR:-/tmp}/whetstone-listed.$$"
 
 # Frontmatter and size limits.
 desc_total=0

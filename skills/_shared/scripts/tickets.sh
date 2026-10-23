@@ -34,7 +34,8 @@ filter='
 
 fetch() {
     if [ -n "${WHETSTONE_FIXTURES:-}" ]; then
-        jq -r "$filter" "$WHETSTONE_FIXTURES/$1.json"
+        # jq.exe on Windows writes CRLF; gh's built-in jq does not.
+        jq -r "$filter" "$WHETSTONE_FIXTURES/$1.json" | tr -d '\r'
     else
         gh api graphql -F query=@"$here/tickets.graphql" \
             -F owner='{owner}' -F repo='{repo}' -F n="$1" --jq "$filter"

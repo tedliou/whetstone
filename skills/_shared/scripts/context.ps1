@@ -5,11 +5,16 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ghOk = $false
+$hasGh = [bool](Get-Command gh -ErrorAction SilentlyContinue)
+$ghHelp = ''
+if ($hasGh -and -not $env:WHETSTONE_OFFLINE) {
+    $ghHelp = (gh issue create --help 2>$null) -join "`n"
+}
 if ($env:WHETSTONE_OFFLINE) {
     Write-Output "gh`tskipped"
-} elseif (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+} elseif (-not $hasGh) {
     Write-Output "gh`tmissing`tinstall from https://cli.github.com then run: gh auth login"
-} elseif (-not ((gh issue create --help 2>$null) -join "`n").Contains('--blocked-by')) {
+} elseif (-not $ghHelp.Contains('--blocked-by')) {
     Write-Output "gh`ttoo-old`tupgrade gh; issue --parent and --blocked-by are required"
 } else {
     $login = gh api user --jq .login 2>$null

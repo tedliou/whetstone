@@ -25,3 +25,15 @@ jobs:
           $issues = $files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_ -Severity Warning,Error }
           $issues | Format-Table -AutoSize
           if ($issues) { exit 1 }
+
+  scripts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run shared scripts on every available shell
+        shell: bash
+        run: bash tests/scripts/run.sh

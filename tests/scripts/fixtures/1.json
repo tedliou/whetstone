@@ -1,0 +1,10 @@
+{"data":{"viewer":{"login":"me"},"repository":{"issue":{"number":1,"title":"Spec: greeting CLI","state":"OPEN","stateReason":null,"body":"spec","assignees":{"nodes":[]},"blockedBy":{"nodes":[]},"closedByPullRequestsReferences":{"nodes":[]},"parent":null,"subIssues":{"nodes":[
+{"number":2,"title":"Parse flags","state":"OPEN","stateReason":null,"body":"x\n<!-- whetstone:checkpoint -->\n","assignees":{"nodes":[]},"blockedBy":{"nodes":[]},"closedByPullRequestsReferences":{"nodes":[]}},
+{"number":3,"title":"Print greeting","state":"OPEN","stateReason":null,"body":"x","assignees":{"nodes":[]},"blockedBy":{"nodes":[{"number":2,"state":"OPEN"},{"number":5,"state":"CLOSED"}]},"closedByPullRequestsReferences":{"nodes":[]}},
+{"number":4,"title":"Config file","state":"OPEN","stateReason":null,"body":"x","assignees":{"nodes":[{"login":"me"}]},"blockedBy":{"nodes":[]},"closedByPullRequestsReferences":{"nodes":[]}},
+{"number":5,"title":"Scaffold","state":"CLOSED","stateReason":"COMPLETED","body":"x","assignees":{"nodes":[]},"blockedBy":{"nodes":[]},"closedByPullRequestsReferences":{"nodes":[]}},
+{"number":6,"title":"Colors","state":"CLOSED","stateReason":"NOT_PLANNED","body":"x","assignees":{"nodes":[]},"blockedBy":{"nodes":[]},"closedByPullRequestsReferences":{"nodes":[]}},
+{"number":7,"title":"Docs","state":"OPEN","stateReason":null,"body":"x","assignees":{"nodes":[{"login":"me"}]},"blockedBy":{"nodes":[]},"closedByPullRequestsReferences":{"nodes":[{"state":"OPEN"}]}},
+{"number":8,"title":"多語系問候","state":"OPEN","stateReason":null,"body":"x","assignees":{"nodes":[{"login":"someone"}]},"blockedBy":{"nodes":[]},"closedByPullRequestsReferences":{"nodes":[]}},
+{"number":10,"title":"Release notes","state":"OPEN","stateReason":null,"body":"x","assignees":{"nodes":[]},"blockedBy":{"nodes":[{"number":4,"state":"OPEN"}]},"closedByPullRequestsReferences":{"nodes":[]}}
+]}}}}}

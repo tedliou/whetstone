@@ -1,0 +1,10 @@
+spec	1	open	Spec: greeting CLI
+ticket	2	done	checkpoint	-	Parse flags
+ticket	3	ready	-	-	Print greeting
+ticket	4	mine	-	-	Config file
+ticket	5	closed	-	-	Scaffold
+ticket	6	not-planned	-	-	Colors
+ticket	7	in-review	-	-	Docs
+ticket	8	taken	-	-	多語系問候
+ticket	10	blocked	-	4	Release notes
+frontier	3

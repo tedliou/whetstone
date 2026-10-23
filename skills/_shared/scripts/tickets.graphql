@@ -1,0 +1,21 @@
+query($owner: String!, $repo: String!, $n: Int!) {
+  viewer { login }
+  repository(owner: $owner, name: $repo) {
+    issue(number: $n) {
+      ...T
+      parent { number }
+      subIssues(first: 100) { nodes { ...T } }
+    }
+  }
+}
+
+fragment T on Issue {
+  number
+  title
+  state
+  stateReason
+  body
+  assignees(first: 10) { nodes { login } }
+  blockedBy(first: 50) { nodes { number state } }
+  closedByPullRequestsReferences(first: 10, includeClosedPrs: false) { nodes { state } }
+}

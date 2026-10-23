@@ -5,8 +5,9 @@ Personal Claude Code skills, forked from mattpocock/skills at tag `upstream-base
 ## Layout
 
 - `skills/<name>/SKILL.md`: one folder per skill, flat. Reference files sit next to `SKILL.md`.
-- `skills/_shared/`: rules and scripts used by more than one skill. `workflow.md` is the single source for branch, commit, and issue-closing rules. `github.md` covers `gh` usage. `scripts/` holds `context`, `tickets`, `link`, `land`, each as `.sh` and `.ps1`.
+- `skills/_shared/`: rules and scripts used by more than one skill. `workflow.md` is the single source for branch, commit, and issue-closing rules. `github.md` covers `gh` usage. `scripts/` holds `context`, `tickets`, and `land`, each as `.sh` and `.ps1`, plus `tickets.graphql`.
 - `scripts/`: repo tooling. `link.sh` / `link.ps1` install the skills into `~/.claude/skills`. `check.sh` runs the same checks as CI.
+- `tests/scripts/`: offline tests that run every `_shared` script under bash, pwsh, and Windows PowerShell and compare the output.
 - `evals/`: trigger and outcome tests.
 
 ## Keeping lists in sync

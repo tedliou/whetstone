@@ -34,19 +34,19 @@ See [workflow.md](workflow.md#branches). Prints `landed` and `removed` on succes
 
 ## gh commands
 
-Write multi-line bodies to a temp file and pass `--body-file`; it avoids quoting problems in every shell.
+Pass multi-line bodies on stdin with `--body-file -`, fed by a bash here-doc or a piped PowerShell here-string. This avoids quoting problems and over-long temp file paths.
 
 | Do | Command |
 |---|---|
 | Read an issue | `gh issue view <n> --json number,title,body,state,comments` |
-| Create a spec | `gh issue create --title <t> --body-file <f>` |
-| Create a ticket | `gh issue create --title <t> --body-file <f> --parent <spec> [--blocked-by <a>,<b>]` |
+| Create a spec | `gh issue create --title <t> --body-file -` |
+| Create a ticket | `gh issue create --title <t> --body-file - --parent <spec> [--blocked-by <a>,<b>]` |
 | Add a blocker later | `gh issue edit <n> --add-blocked-by <m>` |
 | Claim | `gh issue edit <n> --add-assignee @me` |
 | Release a claim | `gh issue edit <n> --remove-assignee @me` |
-| Comment | `gh issue comment <n> --body-file <f>` |
+| Comment | `gh issue comment <n> --body-file -` |
 | Drop as not planned | `gh issue close <n> --reason "not planned"` |
-| Open a PR | `gh pr create --base <default> --head <branch> --title <t> --body-file <f>` |
+| Open a PR | `gh pr create --base <default> --head <branch> --title <t> --body-file -` |
 | Read a PR | `gh pr view <n> --json title,body,state,baseRefName,headRefName` and `gh pr diff <n>` |
 
 Create tickets in dependency order, blockers first, so `--blocked-by` can name real numbers. Mark a checkpoint ticket by putting `<!-- whetstone:checkpoint -->` on its own line in the body; the `tickets` script reads it.

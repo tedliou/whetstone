@@ -14,14 +14,16 @@ Use these words and no synonyms (not slice, task, story, PRD).
 
 ## Scripts
 
-Run scripts with whichever shell tool you have. Both versions print the same output.
+Each skill that uses scripts states their folder, with the path already filled in. Run them with whichever shell tool you have; both versions print the same output. Write the full path out: variables like `${CLAUDE_SKILL_DIR}` are not set in the shell.
 
 ```
-bash "${CLAUDE_SKILL_DIR}/../_shared/scripts/<name>.sh" <args>
-powershell -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_SKILL_DIR}/../_shared/scripts/<name>.ps1" <args>
+bash "<scripts>/<name>.sh" <args>
+powershell -NoProfile -ExecutionPolicy Bypass -File "<scripts>/<name>.ps1" <args>
 ```
 
 Output formats and `gh` commands are in [github.md](github.md).
+
+Skip a script run or issue read when this conversation already holds its current result, for example an issue you just created or `context` output from a previous step with no branch change since.
 
 ## Repo facts
 
@@ -33,7 +35,7 @@ Get each fact in this order and stop at the first hit:
 
 After asking, save the answer to auto memory so the next session does not ask. Never write config files into the project.
 
-Facts that usually need step 2 or 3: the commands that build, test, lint, and type-check. Every implementation step must run them before committing.
+Facts that usually need step 2 or 3: the commands that build, test, lint, and type-check. Every implementation step runs them before committing. A check the project does not have is skipped, not asked about; ask only when no test command can be found.
 
 ## Branches
 
@@ -45,10 +47,11 @@ Facts that usually need step 2 or 3: the commands that build, test, lint, and ty
 ## Commits
 
 - Conventional Commits: `type(scope): summary`, imperative, under 72 characters.
-- One commit per ticket, with a `Refs #<ticket>` trailer. This is how later sessions know a ticket is done but not merged.
+- Keep any attribution lines the user or the harness asks for, in commits and PR bodies.
+- One commit per ticket, ending with the git trailer `Refs: #<ticket>`. This is how later sessions know a ticket is done but not merged.
 - Stage only the files this change touched, by path. Never `git add -A` in a tree with unrelated changes.
 - Never skip hooks or signing. If a hook fails, fix the cause.
-- GLOSSARY.md and docs/adr/ changes from grilling stay uncommitted until a branch is chosen, then go in first as `docs(domain): <summary>` with `Refs #<spec>`, containing only those files.
+- GLOSSARY.md and docs/adr/ changes from grilling stay uncommitted until a branch is chosen, then go in first as `docs(domain): <summary>` with `Refs: #<spec>`, containing only those files.
 
 ## Issues
 
@@ -56,7 +59,7 @@ Facts that usually need step 2 or 3: the commands that build, test, lint, and ty
 |---|---|
 | ready | open, no open blocker, no assignee |
 | mine / taken | assigned to me / to someone else |
-| done | `Refs #n` commit on this branch, issue still open |
+| done | `Refs: #n` commit on this branch, issue still open |
 | in-review | linked to an open PR |
 | closed / not-planned | closed as completed / as not planned |
 

@@ -11,6 +11,8 @@ Prepare this machine for the whetstone skills. Everything goes under the user's 
 
 Ask all questions in one message after the checks, each with a recommended answer. Then apply what was approved.
 
+Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (how to run them: [workflow.md](../_shared/workflow.md#scripts)).
+
 ## 1. Check
 
 - Run `context` ([workflow.md](../_shared/workflow.md#scripts)) and read its `gh` line. Anything but `ok` comes with the fix to tell the user.

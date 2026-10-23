@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 Write a Markdown document that lets a fresh session continue this conversation's work. If the user passed an argument, it says what the next session will focus on; keep what serves that focus and drop the rest.
 
-1. Run the `context` script (see [workflow.md](../_shared/workflow.md#scripts)) to get the repo, branch, uncommitted changes, and open worktrees.
+1. Run the `context` script from `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (see [workflow.md](../_shared/workflow.md#scripts)) to get the repo, branch, uncommitted changes, and open worktrees.
 2. Write the document to the OS temp directory (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) as `handoff-<timestamp>.md`, never inside the repo. Give the user its absolute path.
 
 Contents (translate headings to the output language):

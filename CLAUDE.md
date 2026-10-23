@@ -43,9 +43,8 @@ Token cost and model confusion are the main enemies. Each rule below exists to c
 - `description` is third person, says what the skill does and when to use it, key words first. Main-flow skills (grill, to-spec, to-tickets, implement, pr) must say they trigger only with an issue number or when continuing the previous step. Model-invocable descriptions together stay under 1,700 characters.
 - User-only skills set `disable-model-invocation: true` and an `argument-hint`.
 - Say what to do and why. No MUST, CRITICAL, or capitals for emphasis.
-- Deterministic GitHub or git operations go in a `_shared/scripts` script, not in prose the model turns into commands. Skills call scripts as the first step with whichever shell tool is available:
-  - Bash: `bash "${CLAUDE_SKILL_DIR}/../_shared/scripts/<name>.sh" <args>`
-  - PowerShell: `powershell -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_SKILL_DIR}/../_shared/scripts/<name>.ps1" <args>`
+- Deterministic GitHub or git operations go in a `_shared/scripts` script, not in prose the model turns into commands. `${CLAUDE_SKILL_DIR}` is substituted only in SKILL.md, never in reference files or the shell, so every SKILL.md that runs scripts carries the line ``Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` ``. `_shared/workflow.md` explains how to run them in either shell.
+- Multi-line text for git or gh goes on stdin (`git commit -F -`, `--body-file -`), not in temp files: Windows temp paths can exceed git's path limit.
 - Do not use `!` command injection in skills. It runs one fixed shell and a failure stops the skill from loading.
 - Subagent briefs are fill-in templates in a reference file. A subagent sees only its brief.
 

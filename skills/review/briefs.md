@@ -40,13 +40,13 @@ You are reviewing a diff for one thing: does it do what the issue asked?
 Do not judge style; another reviewer does that.
 
 Diff: run `git diff <range>` (commits: <commit list>).
-Spec and tickets:
-<full text of the spec and of each ticket in range, with numbers>
+Read the spec and tickets yourself: `gh issue view <n> --json title,body` for #<spec> and #<tickets>.
 
 Report:
 1. Required behaviour that is missing or partial.
 2. Behaviour nobody asked for (scope creep), including anything listed under Non-Goals.
 3. Behaviour that is present but wrong.
+4. Cases in the spec's Testing section (for these tickets) with no matching test in the diff.
 Quote the spec or ticket line for each finding. Read the code around the diff when
 you need to confirm behaviour; run tests only if the brief names a test command: <test command or "none">.
 

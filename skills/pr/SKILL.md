@@ -10,6 +10,8 @@ metadata:
 
 Branch and issue rules are in [workflow.md](../_shared/workflow.md). A spec branch becomes one PR into the default branch, and that PR closes the spec and its tickets when merged.
 
+Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (how to run them: [workflow.md](../_shared/workflow.md#scripts)).
+
 ## Steps
 
 1. Run `context`. Stop if `gh` is not `ok`, or if the current branch is the default branch.
@@ -18,10 +20,10 @@ Branch and issue rules are in [workflow.md](../_shared/workflow.md). A spec bran
    - If some tickets are not `done`, list them and ask whether to open the PR anyway. Without the spec's `Closes` line, the spec stays open.
 3. Uncommitted changes: list them and ask. Do not commit them silently.
 4. Review once. Collect the commits in `origin/<default>..HEAD` and drop those whose `Refs` ticket body has the checkpoint marker (already reviewed). If any remain, invoke `review` with that commit list and the spec.
-   - Fix must-fix findings as new commits with the matching `Refs #n`, then run the project's test command again.
+   - Fix must-fix findings as new commits with the matching `Refs: #n`, then run the project's test command again.
    - Keep judgement findings for the AI review section.
 5. Ask once: push and open the PR? Skip the question if the user already said yes in this conversation, for example by accepting implement's offer.
-6. `git push -u origin <branch>`, write the body to a temp file, then `gh pr create --base <default> --head <branch> --title <title> --body-file <file>`. The title is the spec title.
+6. `git push -u origin <branch>`, then `gh pr create --base <default> --head <branch> --title <title> --body-file -` with the body on stdin. The title is the spec title.
 7. Report the PR URL. The next step is the user's: merge on GitHub.
 
 ## Body
@@ -47,7 +49,7 @@ Closes #<ticket>
 Reversible: <yes, or no and why>. Affects: <who or what could break>.
 ```
 
-Only list checks that were actually run. Use GLOSSARY.md terms.
+Only list checks that were actually run. Use GLOSSARY.md terms. Append any attribution lines the user or harness requires.
 
 ## Summary visual
 

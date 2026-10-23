@@ -13,6 +13,8 @@ Two independent reviews of one diff, reported side by side and never merged:
 
 A change can pass one and fail the other, so neither report may hide the other.
 
+Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (how to run them: [workflow.md](../_shared/workflow.md#scripts)).
+
 ## 1. Pin the range
 
 - Run the `context` script ([workflow.md](../_shared/workflow.md#scripts)).
@@ -22,7 +24,7 @@ A change can pass one and fail the other, so neither report may hide the other.
 
 ## 2. Find the spec
 
-In order: the `#n` argument, `Refs #n` / `Closes #n` in the commit messages, the spec number in the branch name. Read each with `gh issue view <n> --json title,body,comments`. For a ticket also read its parent spec. If nothing is found, skip the Spec review and say so.
+In order: the `#n` argument, `Refs: #n` / `Closes #n` in the commit messages, the spec number in the branch name. Collect the issue numbers; for a ticket, also its parent spec. Reviewers read the issues themselves, so you only need the numbers. If nothing is found, skip the Spec review and say so.
 
 ## 3. Find the standards
 
@@ -37,9 +39,11 @@ Fill the templates in [briefs.md](briefs.md) and send all Agent calls in one mes
 | Reviewer | model | Gets |
 |---|---|---|
 | Standards (one per group) | `haiku` | range, commit list, its standards files, the smell baseline |
-| Spec | `sonnet` | range, commit list, spec and ticket text |
+| Spec | `sonnet` | range, commit list, spec and ticket numbers |
 
 Wait for every reviewer before writing anything.
+
+Small diff (under about 100 changed lines, one standards group): skip the subagents and run both briefs yourself, one after the other, keeping the two reports separate.
 
 ## 5. Report
 

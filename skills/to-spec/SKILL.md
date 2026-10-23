@@ -8,12 +8,14 @@ argument-hint: "[#issue to build on]"
 
 Turn what is already known (this conversation, the code, an issue passed as argument) into one spec issue. Do not interview again. The only question is the seam check in step 3.
 
+Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (how to run them: [workflow.md](../_shared/workflow.md#scripts)).
+
 ## Steps
 
 1. Run `context` ([workflow.md](../_shared/workflow.md#scripts)). Stop if `gh` is not `ok`.
 2. Explore the code you have not seen yet. Use GLOSSARY.md terms and respect the ADRs in the area.
 3. Seams: choose where the feature will be tested. Prefer existing seams and the highest one possible; fewer is better, one is ideal. If the seams were already settled while grilling, state them and move on; otherwise propose them and wait for the user.
-4. Write the body from the template below into a temp file and create the issue: `gh issue create --title <title> --body-file <file>`. Do not create a branch; implement does that.
+4. Create the issue with the body from the template below on stdin: `gh issue create --title <title> --body-file -`. Do not create a branch; implement does that.
 5. Report the issue URL, then ask whether to continue with `to-tickets`. On yes, invoke it with the spec number.
 
 ## Writing rules

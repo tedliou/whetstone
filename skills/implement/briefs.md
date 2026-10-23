@@ -14,9 +14,9 @@ Terms: read GLOSSARY.md and the ADRs under docs/adr/ that touch <areas>.
 
 Rules:
 - Work test-first: one failing test at an agreed seam, the least code to pass, tidy what you wrote, repeat.
-- Change only files under: <expected areas>. Other tickets are being worked in parallel elsewhere in this tree.
+- Change only these files: <files from Expected areas>. Other tickets are being worked in parallel elsewhere in this tree.
 - Run only this ticket's tests: <focused test command>. Do not run the full suite.
-- <"Do not commit. Leave your changes in the working tree." | "Commit on branch <branch> with message type(scope): summary and trailer Refs #<n>.">
+- <"Do not commit. Leave your changes in the working tree." | "Commit on branch <branch> with message type(scope): summary and trailer Refs: #<n>.">
 - If the work needs anything outside Scope, a new test seam, or files outside your areas, stop and report the scope change. Do not work around it.
 - Never edit GitHub issues.
 

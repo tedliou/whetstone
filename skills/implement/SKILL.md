@@ -37,7 +37,7 @@ Repeat until `tickets` shows no `ready` or `mine` ticket:
 2. Implement with the `tdd` skill, staying inside the ticket's Scope and Non-goals. If the ticket needs more, stop and ask the user.
 3. Run the full test suite and the other project checks. Fix failures before committing.
 4. Commit with the `commit` skill: only this ticket's files, `Refs: #<ticket>`.
-5. Checkpoint ticket: once the commit exists, invoke `review` on it (`<sha>^..<sha>`) with the ticket number. Fix must-fix findings in a follow-up commit with the same `Refs`. Pass judgement findings on in the final report.
+5. Checkpoint ticket: once the commit exists, invoke `review` with the end of the previous review (or the branch start) as the fixed point, and the ticket number. Fix must-fix findings in a follow-up commit with the same `Refs`. Pass judgement findings on in the final report.
 6. Run `tickets` again; finished tickets unblock others.
 
 ### Mode A (default, cheaper)

@@ -19,7 +19,7 @@ Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (how to run them: [wor
 
 - Run the `context` script ([workflow.md](../_shared/workflow.md#scripts)).
 - Range from the argument: a ref (`main`, a SHA, a tag) means `<ref>...HEAD`; `A..B` is used as given; a PR number means `gh pr diff <n>`. Without an argument use `origin/<default>...HEAD`.
-- A caller may pass an explicit commit list instead (pr does this to skip commits already reviewed at a checkpoint).
+- A caller may give the Spec review its own range, such as `origin/<default>...HEAD` when pr checks the whole spec while Standards covers only the commits not yet reviewed. Note `git diff --stat` and `git log --oneline` for both ranges.
 - Check the range resolves and the diff is not empty before spawning anything. Note `git diff --stat` and `git log --oneline` for the range.
 
 ## 2. Find the spec

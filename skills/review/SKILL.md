@@ -24,7 +24,7 @@ Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (how to run them: [wor
 
 ## 2. Find the spec
 
-In order: the `#n` argument, `Refs: #n` / `Closes #n` in the commit messages, the spec number in the branch name. Collect the issue numbers; for a ticket, also its parent spec. Reviewers read the issues themselves, so you only need the numbers. If nothing is found, skip the Spec review and say so.
+In order: the `#n` argument, `Refs: #n` / `Closes #n` in the commit messages, the spec number in the branch name. Collect the issue numbers; for a ticket, also its parent spec. Reviewers read the issues themselves, so you only need the numbers. If nothing is found, ask the user; if they say there is no spec, skip the Spec review and say so.
 
 ## 3. Find the standards
 
@@ -42,8 +42,6 @@ Fill the templates in [briefs.md](briefs.md) and send all Agent calls in one mes
 | Spec | `sonnet` | range, commit list, spec and ticket numbers |
 
 Wait for every reviewer before writing anything.
-
-Small diff (under about 100 changed lines, one standards group): skip the subagents and run both briefs yourself, one after the other, keeping the two reports separate.
 
 ## 5. Report
 

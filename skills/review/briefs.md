@@ -48,7 +48,7 @@ Report:
 3. Behaviour that is present but wrong.
 4. Cases in the spec's Testing section (for these tickets) with no matching test in the diff.
 Quote the spec or ticket line for each finding. Read the code around the diff when
-you need to confirm behaviour; run tests only if the brief names a test command: <test command or "none">.
+you need to confirm behaviour; don't run tests.
 
 Output only finding lines, one per line, then nothing else:
 <file>:<line> <must-fix|judgement> "<quoted requirement>": <problem>. Fix: <fix>.

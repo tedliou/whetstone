@@ -19,7 +19,9 @@ Shared scripts: `${CLAUDE_SKILL_DIR}/../_shared/scripts/` (how to run them: [wor
    - Tickets with status `done` get a `Closes #n` line, and so does the spec.
    - If some tickets are not `done`, list them and ask whether to open the PR anyway. Without the spec's `Closes` line, the spec stays open.
 3. Uncommitted changes: list them and ask. Do not commit them silently.
-4. Review once. Collect the commits in `origin/<default>..HEAD` and drop those whose `Refs` ticket body has the checkpoint marker (already reviewed). If any remain, invoke `review` with that commit list and the spec.
+4. Review once, with a range for each axis. First check that every commit in `origin/<default>..HEAD` has a `Refs` to this spec or one of its tickets; if not, list the others and ask.
+   - Standards: the commits not yet reviewed, from the end of the last checkpoint review (or `origin/<default>` when there was none) to `HEAD`. Code is checked against the standards once, so commits a checkpoint already covered aren't checked again.
+   - Spec: the whole spec, `origin/<default>...HEAD`, with the spec and all its tickets, so it checks every user story is covered. Coverage belongs to the whole spec: a later ticket can break a story an earlier one delivered, and a story no ticket took shows only against the whole diff.
    - Fix must-fix findings as new commits with the matching `Refs: #n`, then run the project's test command again.
    - Keep judgement findings for the AI review section.
 5. Ask once: push and open the PR? Skip the question if the user already said yes in this conversation, for example by accepting implement's offer.

@@ -46,7 +46,7 @@ Report:
 1. Required behaviour that is missing or partial.
 2. Behaviour nobody asked for (scope creep), including anything listed under Non-Goals.
 3. Behaviour that is present but wrong.
-4. Cases in the spec's Testing section (for these tickets) with no matching test in the diff.
+4. Cases in the spec's Testing section (for the tickets given) with no matching test in the diff.
 Quote the spec or ticket line for each finding. Read the code around the diff when
 you need to confirm behaviour; don't run tests.
 
